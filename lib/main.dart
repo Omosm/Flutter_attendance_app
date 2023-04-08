@@ -77,6 +77,8 @@ class AttendanceListState extends State<AttendanceList> {
     }
   ];
 
+  late ScaffoldMessengerState _scaffoldMessengerState;
+
   List<Map<String, dynamic>> filteredRecords = [];
   bool isTimeAgoFormat = true;
   TextEditingController searchController = TextEditingController();
@@ -110,6 +112,7 @@ class AttendanceListState extends State<AttendanceList> {
   @override
   Widget build(BuildContext context) {
     attendanceRecords.sort((a, b) => b['check-in'].compareTo(a['check-in']));
+    _scaffoldMessengerState = ScaffoldMessenger.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Attendance Records"),
@@ -156,19 +159,27 @@ class AttendanceListState extends State<AttendanceList> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const AddAttendanceRecordScreen(),
             ),
-          ).then((value) {
-            if (value != null) {
-              setState(() {
-                attendanceRecords.add(value);
-              });
-            }
-          });
+          );
+
+          if (result != null) {
+            setState(() {
+              attendanceRecords.add(result);
+            });
+
+            _scaffoldMessengerState.showSnackBar(
+              const SnackBar(
+                content: Text('New record added successfully!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
         },
         child: const Icon(Icons.add),
       ),

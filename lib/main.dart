@@ -155,6 +155,23 @@ class AttendanceListState extends State<AttendanceList> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddAttendanceRecordScreen(),
+            ),
+          ).then((value) {
+            if (value != null) {
+              setState(() {
+                attendanceRecords.add(value);
+              });
+            }
+          });
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 

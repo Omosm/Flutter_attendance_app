@@ -155,6 +155,14 @@ class AttendanceListState extends State<AttendanceList> {
                     : DateFormat("dd/MM/yyyy hh:mm a")
                         .format(record["check-in"]))
                 : 'Not checked in'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AttendanceDetailsPage(record: record),
+                ),
+              );
+            },
           );
         },
       ),
@@ -408,6 +416,36 @@ class AddAttendanceRecordScreenState extends State<AddAttendanceRecordScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class AttendanceDetailsPage extends StatelessWidget {
+  final Map<String, dynamic> record;
+
+  const AttendanceDetailsPage({Key? key, required this.record})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Attendance Record Details'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('User: ${record["user"]}'),
+            const SizedBox(height: 8),
+            Text('Phone: ${record["phone"]}'),
+            const SizedBox(height: 8),
+            Text(
+                'Check-in Time: ${record["check-in"] != null ? DateFormat("dd/MM/yyyy hh:mm a").format(record["check-in"]) : "Not checked in"}'),
+          ],
         ),
       ),
     );

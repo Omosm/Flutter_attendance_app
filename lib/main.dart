@@ -78,6 +78,7 @@ class AttendanceListState extends State<AttendanceList> {
   ];
 
   late ScaffoldMessengerState _scaffoldMessengerState;
+  final ScrollController _scrollController = ScrollController();
 
   List<Map<String, dynamic>> filteredRecords = [];
   bool isTimeAgoFormat = true;
@@ -87,6 +88,7 @@ class AttendanceListState extends State<AttendanceList> {
   void initState() {
     super.initState();
     getPreferences();
+    _scrollController.addListener(_scrollListener);
   }
 
   void getPreferences() async {
@@ -107,6 +109,24 @@ class AttendanceListState extends State<AttendanceList> {
         return record["user"].toLowerCase().contains(query.toLowerCase());
       }).toList();
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      _scaffoldMessengerState.showSnackBar(
+        const SnackBar(
+          content: Text('You have reached the end of the list.'),
+        ),
+      );
+    }
   }
 
   @override
@@ -139,6 +159,7 @@ class AttendanceListState extends State<AttendanceList> {
         ],
       ),
       body: ListView.builder(
+        controller: _scrollController,
         itemCount: filteredRecords.isNotEmpty
             ? filteredRecords.length
             : attendanceRecords.length,

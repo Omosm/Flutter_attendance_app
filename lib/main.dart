@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -11,7 +12,48 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Attendance Records',
-      home: AttendanceList(),
+      home: Introduction(),
+    );
+  }
+}
+
+class Introduction extends StatelessWidget {
+  const Introduction({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final List<PageViewModel> pages = [
+      PageViewModel(
+        title: "Welcome to the Attendance Records app",
+        body:
+            "This app is designed to help you keep track of attendance records.",
+        image: const Center(child: Icon(Icons.person)),
+      ),
+      PageViewModel(
+        title: "Record Attendance",
+        body: "Add a new attendance record by tapping the Add button.",
+        image: const Center(child: Icon(Icons.add)),
+      ),
+      PageViewModel(
+        title: "Search Records",
+        body: "Find an attendance record by using the search feature.",
+        image: const Center(child: Icon(Icons.search)),
+      ),
+    ];
+
+    return IntroductionScreen(
+      pages: pages,
+      onDone: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => const AttendanceList(),
+          ),
+        );
+      },
+      showSkipButton: true,
+      skip: const Text("Skip"),
+      done: const Text("Done"),
+      showNextButton: false,
     );
   }
 }

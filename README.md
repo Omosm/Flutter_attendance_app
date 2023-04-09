@@ -1,3 +1,3 @@
-# attendance_app
+# Flutter Attendance App
 
-A new Flutter project.
+This is a simple flutter application to view attendance records.

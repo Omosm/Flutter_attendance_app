@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 void main() => runApp(const MyApp());
 
@@ -15,6 +16,11 @@ class MyApp extends StatelessWidget {
       home: Introduction(),
     );
   }
+}
+
+void shareContact(String name, String phone) {
+  final String text = "Contact name: $name\nPhone number: $phone";
+  Share.share(text);
 }
 
 class Introduction extends StatelessWidget {
@@ -209,24 +215,29 @@ class AttendanceListState extends State<AttendanceList> {
           Map<String, dynamic> record = filteredRecords.isNotEmpty
               ? filteredRecords[index]
               : attendanceRecords[index];
-          return ListTile(
-            title: Text(record["user"]),
-            subtitle: Text(record["phone"]),
-            trailing: Text(record["check-in"] != null
-                ? (isTimeAgoFormat
-                    ? timeAgo(record["check-in"])
-                    : DateFormat("dd/MM/yyyy hh:mm a")
-                        .format(record["check-in"]))
-                : 'Not checked in'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AttendanceDetailsPage(record: record),
-                ),
-              );
-            },
-          );
+          return GestureDetector(
+              onLongPress: () {
+                shareContact(record['user'], record['phone']);
+              },
+              child: ListTile(
+                title: Text(record["user"]),
+                subtitle: Text(record["phone"]),
+                trailing: Text(record["check-in"] != null
+                    ? (isTimeAgoFormat
+                        ? timeAgo(record["check-in"])
+                        : DateFormat("dd/MM/yyyy hh:mm a")
+                            .format(record["check-in"]))
+                    : 'Not checked in'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          AttendanceDetailsPage(record: record),
+                    ),
+                  );
+                },
+              ));
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -504,6 +515,14 @@ class AttendanceDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Attendance Record Details'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              shareContact(record['user'], record['phone']);
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

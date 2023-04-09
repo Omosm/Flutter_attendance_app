@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -262,6 +262,14 @@ class AttendanceSearch extends SearchDelegate<String> {
                   ? AttendanceListState.timeAgo(record["check-in"])
                   : DateFormat("dd/MM/yyyy hh:mm a").format(record["check-in"]))
               : 'Not checked in'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AttendanceDetailsPage(record: record),
+              ),
+            );
+          },
         );
       },
     );
@@ -439,12 +447,27 @@ class AttendanceDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('User: ${record["user"]}'),
-            const SizedBox(height: 8),
-            Text('Phone: ${record["phone"]}'),
-            const SizedBox(height: 8),
             Text(
-                'Check-in Time: ${record["check-in"] != null ? DateFormat("dd/MM/yyyy hh:mm a").format(record["check-in"]) : "Not checked in"}'),
+              record["user"],
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24.0,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              "Phone: ${record["phone"]}",
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              "Check-in: ${record["check-in"] != null ? DateFormat("dd/MM/yyyy hh:mm a").format(record["check-in"]) : "Not checked in"}",
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
           ],
         ),
       ),
